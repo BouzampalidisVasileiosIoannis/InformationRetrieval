@@ -1,4 +1,3 @@
-# InformationRetrieval
 # SongInformationSearchEngine
 
 This project is implemented by the undergraduate students:
