@@ -3,6 +3,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import au.com.bytecode.opencsv.*;
@@ -27,6 +28,10 @@ public class Indexer {
         this.writer = new IndexWriter(indexDirectory, indexConfig);
     }
 
+    public Analyzer getAnalyzer() {
+        return analyzer;
+    }
+
     public void addDoc(Document doc) throws IOException {
         //System.out.println("The added doc: " + doc);
         writer.addDocument(doc);
@@ -43,6 +48,14 @@ public class Indexer {
 
     public void indexerClose() throws IOException {
         writer.close();
+    }
+
+    public IndexWriter getWriter() {
+        return writer;
+    }
+
+    public DirectoryReader getReader() throws IOException {
+        return DirectoryReader.open(indexDirectory);
     }
 
     public void loadFromCSV(String csvPath, Indexer myIndexer) throws IOException {
