@@ -1,4 +1,4 @@
-package mye033.InformationRetrieval;
+package mye033.SongInformationEngine;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results</title>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #337ab7;
+        }
+
+        .result {
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result h2 {
+            color: #337ab7;
+            font-size: 18px;
+            margin-top: 0px;
+        }
+
+        .result p {
+            margin-bottom: 0px;
+        }
+
+        .result span.highlight {
+            background-color: #ffff99;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Search Results</h1>
+<ul>
+  <li th:each="result : ${results}" th:utext="${result}"></li>
+</ul>
+</body>
+
+</html>

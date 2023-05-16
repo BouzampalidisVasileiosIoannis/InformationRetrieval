@@ -1,4 +1,4 @@
-package mye033.InformationRetrieval;
+package mye033.SongInformationEngine;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

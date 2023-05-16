@@ -1,12 +1,15 @@
-package mye033.InformationRetrieval;
+package mye033.SongInformationEngine;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
+@Component
 public class QueryHandler {
     private final QueryParser parser;
 
@@ -45,6 +48,7 @@ public class QueryHandler {
         }
     }
 
+    /*
     public static void main(String[] args) throws IOException, ParseException {
         //System.out.println("After the specification of the field the ':' is required. \nEnter your query:");
         Indexer myIndexer = new Indexer("G:\\8th_semester\\Information_Retrieval");
@@ -53,4 +57,5 @@ public class QueryHandler {
         QueryHandler userQuery = new QueryHandler(userParser);
         //userQuery.getQuery();
     }
+    */
 }
