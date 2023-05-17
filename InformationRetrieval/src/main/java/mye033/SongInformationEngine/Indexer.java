@@ -11,28 +11,23 @@ import org.apache.lucene.index.IndexWriterConfig;
 import au.com.bytecode.opencsv.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-@Component
 public class Indexer {
     private final Directory indexDirectory;
     private final Analyzer analyzer;
     private final IndexWriterConfig indexConfig;
     private IndexWriter writer;
-    private final String INDEXDIRECTORYPATH = "G:\\8th_semester\\Information_Retrieval";
-    private final String CSVPATH = "G:\\8th_semester\\Information_Retrieval\\Data\\spotify_millsongdata.csv";
+    private String csvpath;
 
-    //@Autowired
-    public Indexer() throws IOException {
-        this.indexDirectory = FSDirectory.open(Paths.get(INDEXDIRECTORYPATH));
+    public Indexer(String indexPath, String csvPath) throws IOException {
+        this.indexDirectory = FSDirectory.open(Paths.get(indexPath));
         this.analyzer = new StandardAnalyzer();
         this.indexConfig = new IndexWriterConfig(analyzer);
         this.writer = new IndexWriter(indexDirectory, indexConfig);
+        this.csvpath = csvPath;
     }
 
     public Analyzer getAnalyzer() {
@@ -65,8 +60,8 @@ public class Indexer {
         return DirectoryReader.open(indexDirectory);
     }
 
-    public void loadFromCSV(String CSVPATH, Indexer myIndexer) throws IOException {
-        try (CSVReader csvReader = new CSVReader(new FileReader(CSVPATH))) {
+    public void loadFromCSV(Indexer myIndexer) throws IOException {
+        try (CSVReader csvReader = new CSVReader(new FileReader(this.csvpath))) {
             String[] line;
             System.out.println("Data import has begun...");
             while ((line = csvReader.readNext()) != null) {
@@ -83,12 +78,5 @@ public class Indexer {
         myIndexer.indexerCommit();
         myIndexer.indexerClose();
         System.out.println("Data imported successfully!");
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        Indexer myIndexer = new Indexer();
-        myIndexer.loadFromCSV("G:\\8th_semester\\Information_Retrieval\\Data\\spotify_millsongdata.csv", myIndexer);
-
     }
 }
