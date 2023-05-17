@@ -8,6 +8,15 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative; /* Added */
         }
 
         h1 {
@@ -28,24 +37,40 @@
             color: #337ab7;
             font-size: 18px;
             margin-top: 0px;
+            margin-bottom: 10px;
         }
 
         .result p {
-            margin-bottom: 0px;
+            margin: 0;
         }
 
         .result span.highlight {
             background-color: #ffff99;
             font-weight: bold;
         }
+
+        .return-button {
+            position: absolute;
+            top: 80px; /* Adjust as needed */
+            right: 20px;
+            background-color: #337ab7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-<h1>Search Results</h1>
-<ul>
-  <li th:each="result : ${results}" th:utext="${result}"></li>
-</ul>
+<div class="container">
+  <h1>Search Results</h1>
+  <a href="/home" class="return-button">Return to seach form</a>  <!-- Moved below h1 -->
+  <ul>
+    <li th:each="result : ${results}" th:utext="${result}" class="result"></li>
+  </ul>
+</div>
 </body>
 
 </html>

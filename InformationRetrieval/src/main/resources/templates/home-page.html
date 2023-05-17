@@ -64,8 +64,11 @@
 </head>
 <body>
 <div class="container">
-    <h1>Enter Your Query</h1>
-    <form method="post" th:action="@{/search}">
+    <h1>Search for a Song's Lyrics Title or Artist </h1>
+    <h2>Your search should be typed like this :
+        Artist/Lyrics/Title : </h2>
+
+    <form method="get" th:action="@{/search-results}" th:method="get">
         <input type="text" name="query" placeholder="Enter your query...">
         <button type="submit">Search</button>
     </form>
