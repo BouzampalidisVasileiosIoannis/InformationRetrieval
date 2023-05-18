@@ -5,18 +5,20 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class Searcher {
@@ -32,26 +34,20 @@ public class Searcher {
         this.myIndexer = new Indexer(indexPath,csvPath);
         this.myIndexSearcher = new IndexSearcher((myIndexer.getReader()));
         this.myAnalyzer = myIndexer.getAnalyzer();
-        //this.myQueryHandler = new QueryHandler(new QueryParser("lyrics", myAnalyzer));
         this.myQueryHandler = handler;
     }
 
     public List<String> search(String query) throws IOException, ParseException, InvalidTokenOffsetsException, BadLocationException {
         Query myQuery = myQueryHandler.getQuery(query);
         TopDocs myTopDocs = myIndexSearcher.search(myQuery,numberOfHits);
+        System.out.println("The total hits of your query were : " + myTopDocs.totalHits);
         StoredFields storedFields = myIndexSearcher.storedFields();
-        int maxFragments = 100000000;
+        int maxFragments = 1000000000;
 
         List<String> highlightedResults = new ArrayList<>();
-        Set<String> processedDocs = new HashSet<>();
 
         for (ScoreDoc hit : myTopDocs.scoreDocs) {
             Document doc = myIndexSearcher.doc(hit.doc);
-            String docId = doc.get("id");
-            if (processedDocs.contains(docId)) {
-                continue; // Skip already processed document
-            }
-            processedDocs.add(docId);
             String title = doc.get("title");
             String artist = doc.get("artist");
             String lyrics = doc.get("lyrics");
@@ -84,9 +80,19 @@ public class Searcher {
                 result.append("<br>");
             }
             result.append("</body></html>");
+            System.out.println(result.length());
             highlightedResults.add(result.toString());
         }
         return highlightedResults;
 
     }
+
+
+    /*
+    public static void main(String[] args) throws IOException, ParseException, InvalidTokenOffsetsException {
+        Searcher userSearch = new Searcher("G:\\8th_semester\\Information_Retrieval");
+        userSearch.myIndexer.loadFromCSV("G:\\8th_semester\\Information_Retrieval\\Data\\spotify_millsongdata.csv",userSearch.myIndexer);
+        //userSearch.search();
+    }
+    */
 }

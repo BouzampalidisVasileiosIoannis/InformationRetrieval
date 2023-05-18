@@ -50,24 +50,30 @@ public class SearchController {
 
     @RequestMapping("/search-results")
     private String loadSearchResults(@RequestParam("query") String userQuery, Model theModel) throws InvalidTokenOffsetsException, IOException, ParseException, BadLocationException {
-        boolean res = false;
-        for (String s : this.standardQuery) {
-            if (userQuery.contains(s)) {
-                res = true;
-                break;
+        if (userQuery.startsWith("lyrics:") || userQuery.startsWith("title:") || userQuery.startsWith("artist:")){
+            String finalQuery = userQuery.toLowerCase();
+            List<String> highlightedResults = searcher.search(finalQuery);
+
+            if (highlightedResults.size() < 1){
+                String errorMessage = "Your search didn't return any results. Are you sure you typed it correctly? \n" +
+                        "The correct search should be either lyrics, title or artist followed by ':' ";
+                theModel.addAttribute("errorMessage", errorMessage);
+                return "error-page";
             }
+            else {
+                theModel.addAttribute("results", highlightedResults);
+                System.out.println(highlightedResults.size());
+                return "result-page";
+            }
+
         }
-        if (!res){
+        else{
             String errorMessage = "Your search didn't return any results. Are you sure you typed it correctly? \n" +
                     "The correct search should be either lyrics, title or artist followed by ':' ";
             theModel.addAttribute("errorMessage", errorMessage);
             return "error-page";
         }
-        String finalQuery = userQuery.toLowerCase();
-        List<String> highlightedResults = searcher.search(finalQuery);
 
-        theModel.addAttribute("results", highlightedResults);
-        return "result-page";
 
     }
 }
