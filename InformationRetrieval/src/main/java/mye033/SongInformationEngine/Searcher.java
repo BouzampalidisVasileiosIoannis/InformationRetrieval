@@ -18,7 +18,9 @@ import org.springframework.stereotype.Component;
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Searcher {
@@ -27,7 +29,7 @@ public class Searcher {
     private final Analyzer myAnalyzer;
 
     public final Indexer myIndexer;
-    private int numberOfHits = 10;  //isws na to kanoume na pairnei input ap to xrhsth
+    private int numberOfHits = 15;
 
     //@Autowired
     public Searcher (QueryHandler handler, String indexPath, String csvPath) throws IOException {
@@ -39,10 +41,11 @@ public class Searcher {
 
     public List<String> search(String query) throws IOException, ParseException, InvalidTokenOffsetsException, BadLocationException {
         Query myQuery = myQueryHandler.getQuery(query);
-        TopDocs myTopDocs = myIndexSearcher.search(myQuery,numberOfHits);
+        TopDocs myTopDocs = myIndexSearcher.search(myQuery, numberOfHits);
         System.out.println("The total hits of your query were : " + myTopDocs.totalHits);
         StoredFields storedFields = myIndexSearcher.storedFields();
-        int maxFragments = 1000000000;
+        int maxFragmentsLyrics = 1000000000;
+        int maxFragmentsRest = 10000;
 
         List<String> highlightedResults = new ArrayList<>();
 
@@ -56,43 +59,77 @@ public class Searcher {
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<b>", "</b>");
 
             Highlighter highlighter = new Highlighter(formatter, scorer);
-            Fragmenter fragmenter = new SimpleSpanFragmenter(scorer, maxFragments);
+            Fragmenter fragmenter = new SimpleSpanFragmenter(scorer, maxFragmentsLyrics);
             highlighter.setTextFragmenter(fragmenter);
 
+            Highlighter highlighterRest = new Highlighter(formatter, scorer);
+            Fragmenter fragmenterRest = new SimpleSpanFragmenter(scorer, maxFragmentsRest);
+            highlighterRest.setTextFragmenter(fragmenterRest);
+
+
+            TokenStream artistStream = TokenSources.getTokenStream("artist", artist, myAnalyzer);
+            TextFragment[] artistFragments = highlighterRest.getBestTextFragments(artistStream, artist, true, maxFragmentsRest);
+
+
+            TokenStream titleStream = TokenSources.getTokenStream("title", title, myAnalyzer);
+            TextFragment[] titleFragments = highlighterRest.getBestTextFragments(titleStream, title, true, maxFragmentsRest);
+
+
             TokenStream lyricsStream = TokenSources.getTokenStream("lyrics", lyrics, myAnalyzer);
-            TextFragment[] lyricsFragments = highlighter.getBestTextFragments(lyricsStream, lyrics, true, maxFragments);
+            TextFragment[] lyricsFragments = highlighter.getBestTextFragments(lyricsStream, lyrics, true, maxFragmentsLyrics);
 
             StringBuilder result = new StringBuilder();
             result.append("<html><body>");
-            if (title != null) {
-                result.append("<b>Title:</b> ").append(title).append("<br>");
-            }
-            if (artist != null) {
-                result.append("<b>Artist:</b> ").append(artist).append("<br>");
-            }
-            if (lyricsFragments != null && lyricsFragments.length > 0) {
-                result.append("<b>Lyrics:</b> ");
-                for (TextFragment fragment : lyricsFragments) {
-                    if (fragment != null && fragment.getScore() > 0) {
-                        result.append(fragment);
+            if (myQuery.toString().startsWith("title:")) {
+                if (titleFragments != null && titleFragments.length > 0) {
+                    result.append("<b>Title:</b> ");
+                    for (TextFragment fragment : titleFragments) {
+                        if (fragment != null && fragment.getScore() > 0) {
+                            result.append(fragment);
+                        }
                     }
+                    result.append("<br>");
+                    result.append("<b>Artist:</b> ").append(artist).append("<br>");
+                    result.append("<b>Lyrics:</b> ").append(lyrics).append("<br>");
+                    result.append("<br>");
                 }
-                result.append("<br>");
+            }
+            else if (myQuery.toString().startsWith("artist:")) {
+                if (artistFragments != null && artistFragments.length > 0) {
+                    result.append("<b>Artist:</b> ");
+                    for (TextFragment fragment : artistFragments) {
+                        if (fragment != null && fragment.getScore() > 0) {
+                            result.append(fragment);
+                        }
+                    }
+                    result.append("<br>");
+                    result.append("<b>Title:</b> ").append(title).append("<br>");
+                    result.append("<b>Lyrics:</b> ").append(lyrics).append("<br>");
+                    result.append("<br>");
+                }
+            }
+            else if (myQuery.toString().startsWith("lyrics:")){
+                if (lyricsFragments != null && lyricsFragments.length > 0) {
+
+                    result.append("<b>Lyrics:</b> ");
+                    for (TextFragment fragment : lyricsFragments) {
+                        if (fragment != null && fragment.getScore() > 0) {
+                            result.append(fragment);
+                        }
+                    }
+                    result.append("<br>");
+                    result.append("<b>Artist:</b> ").append(artist).append("<br>");
+                    result.append("<b>Title:</b> ").append(title).append("<br>");
+                    result.append("<br>");
+                }
             }
             result.append("</body></html>");
-            System.out.println(result.length());
             highlightedResults.add(result.toString());
         }
+        Set<String> uniqueResults = new HashSet<>(highlightedResults);
+        highlightedResults.clear();
+        highlightedResults.addAll(uniqueResults);
         return highlightedResults;
 
     }
-
-
-    /*
-    public static void main(String[] args) throws IOException, ParseException, InvalidTokenOffsetsException {
-        Searcher userSearch = new Searcher("G:\\8th_semester\\Information_Retrieval");
-        userSearch.myIndexer.loadFromCSV("G:\\8th_semester\\Information_Retrieval\\Data\\spotify_millsongdata.csv",userSearch.myIndexer);
-        //userSearch.search();
-    }
-    */
 }

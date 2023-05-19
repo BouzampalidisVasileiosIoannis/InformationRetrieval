@@ -57,9 +57,12 @@
             color: #fff;
             border: none;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 100px;
             cursor: pointer;
             text-decoration: none;
+        }
+        .return-button:hover {
+            background-color: #0000FF;
         }
     </style>
 </head>
@@ -67,7 +70,7 @@
 <body>
 <div class="container">
   <h1>Search Results</h1>
-  <a href="/home" class="return-button">Return to seach form</a>  <!-- Moved below h1 -->
+  <a href="/home" class="return-button return-button-hover">Return to search form</a>  <!-- Moved below h1 -->
   <ul>
     <li th:each="result : ${results}" th:utext="${result}" class="result"></li>
   </ul>

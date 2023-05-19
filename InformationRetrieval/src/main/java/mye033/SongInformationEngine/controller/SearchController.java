@@ -20,8 +20,8 @@ import java.util.List;
 @Controller
 public class SearchController {
 
-    String indexPath = "C:\\Users\\kostas\\Documents\\Sxoli\\4oEtos\\8th_Semester\\InformationRetrieval\\Index";
-    String csv = "C:\\Users\\kostas\\Documents\\Sxoli\\4oEtos\\8th_Semester\\InformationRetrieval\\Data\\spotify_millsongdata.csv";
+    String indexPath = "G:\\8th_semester\\Information_Retrieval";
+    String csv = "G:\\8th_semester\\Information_Retrieval\\Data\\spotify_millsongdata.csv";
 
     List<String> standardQuery = new ArrayList<String>();
 
@@ -50,8 +50,9 @@ public class SearchController {
 
     @RequestMapping("/search-results")
     private String loadSearchResults(@RequestParam("query") String userQuery, Model theModel) throws InvalidTokenOffsetsException, IOException, ParseException, BadLocationException {
-        if (userQuery.startsWith("lyrics:") || userQuery.startsWith("title:") || userQuery.startsWith("artist:")){
-            String finalQuery = userQuery.toLowerCase();
+        String finalQuery = userQuery.toLowerCase();
+        if (finalQuery.startsWith("lyrics:") || finalQuery.startsWith("title:") || finalQuery.startsWith("artist:")){
+
             List<String> highlightedResults = searcher.search(finalQuery);
 
             if (highlightedResults.size() < 1){
