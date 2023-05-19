@@ -36,11 +36,11 @@ The *QueryHandler* class is responsible for handling user queries and returning 
 
 The **getQuery** method takes the user's input, splits it into two parts based on the first occurrence of ":" character, and uses the first part as the field type and the second part as the search phrase. If the search phrase consists of only one word, a *TermQuery* object is created and returned. Otherwise, if the search phrase consists of multiple words, a *PhraseQuery* object is created and returned, which matches documents containing the search phrase in the specified field type.
 
-A detailed description of the *Searcher* class cannot be provided at the time being as it is incomplete.
+The *Searcher* class is tasked with handling user queries and performing search operations within the Lucene-based search engine. It plays a crucial role in executing searches and retrieving relevant results based on the user's search. The class features a constructor that takes a *QueryHandler* object, an index path, and a CSV path as parameters. An essential method of the *Searcher* class is the **search** method. This method accepts a query string as input and facilitates the search process. It leverages the capabilities of the underlying components, including the *IndexSearcher*, *Analyzer*, and *QueryHandler*, to execute the search query against the Lucene index. To enhance result visibility, the method employs a *Highlighter* object to highlight matching terms in the retrieved documents. The highlighted results are formatted in HTML for better presentation.
 
 *Query Results Presentation*
 
-A possible presentation of the search results, based on the queries, would be through the terminal. However, we acknowledge that a better implementation would include a graphical interface, which is more user-friendly.
+The presentation of the search results and the submission of queries are now facilitated through a web page implemented with Spring Boot. Initially, the user is presented with a form to submit their query, followed by the display of search results in the form of a list, with matching items highlighted in bold.
 
 
 *Sample of data entries*

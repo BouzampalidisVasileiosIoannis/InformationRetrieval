@@ -12,9 +12,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.search.highlight.Highlighter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.util.ArrayList;
