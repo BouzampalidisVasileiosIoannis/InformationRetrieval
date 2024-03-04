@@ -1,4 +1,4 @@
-# SongInformationSearchEngine
+# Song Information Search Engine
 
 This project is implemented by the undergraduate students:
 -Vasileios Ioannis Bouzampalidis
